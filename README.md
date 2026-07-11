@@ -1,113 +1,73 @@
-<div align="center">
+# YOLO Mouse
 
-# 🖱️ YOLO Mouse
+A polished Windows cursor-motion playground with a simple native GUI. Adjust the duration, pattern size, and speed, then run a smooth figure-eight animation from your cursor's current position.
 
-**A tiny, configurable C++ cursor-motion demo for Windows.**
+> This is a cursor animation demo—not a YOLO object-detection model.
 
-[![C++20](https://img.shields.io/badge/C%2B%2B-20-00599C?logo=cplusplus)](https://isocpp.org/)
-[![CMake](https://img.shields.io/badge/CMake-3.20%2B-064F8C?logo=cmake)](https://cmake.org/)
-[![Platform](https://img.shields.io/badge/platform-Windows-0078D4?logo=windows)](https://www.microsoft.com/windows)
-[![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+## Highlights
 
-Draw a smooth figure-eight with your cursor, adjust the size and speed, and stop instantly with **Esc**.
+- Modern dark Windows control panel
+- Live sliders for duration, pattern size, and speed
+- Three-second safety countdown
+- Start and Stop controls with live status
+- Press **Esc** at any time to stop
+- Returns the cursor to its starting position
+- Lightweight native C++ with no runtime dependencies
 
-</div>
+## Quick start
 
-## Features
+### Easiest method: project dashboard
 
-- Simple C++20 source with no third-party runtime dependencies
-- Three-second safety countdown before movement begins
-- **Esc** emergency stop and automatic return to the starting position
-- Configurable duration, radius, and speed
-- Dry-run mode that never moves the cursor
+Double-click **`dashboard.bat`**, then press **1**. The dashboard checks your tools, configures the project, and builds the program. After setup, use option **2** to launch it.
 
-> [!NOTE]
-> “YOLO” is the project name. This starter does not include the YOLO computer-vision model; it demonstrates safe, programmable mouse movement using the Windows API.
+The numbered dashboard also lets you rebuild, open the project folder, inspect build errors, check requirements, clean the build, and view help.
 
-## Setup: step by step
+### Manual method
 
 ### 1. Install the tools
 
-Install both of these:
+Install [Visual Studio 2022 Community](https://visualstudio.microsoft.com/vs/community/) and select **Desktop development with C++**. Ensure CMake support is included.
 
-1. [Visual Studio 2022 Community](https://visualstudio.microsoft.com/vs/community/)
-2. In the Visual Studio Installer, select **Desktop development with C++**
-3. [CMake 3.20 or newer](https://cmake.org/download/) — select **Add CMake to the system PATH** during installation
+### 2. Open a developer terminal
 
-### 2. Download the project
+From the Start menu, open **Developer PowerShell for VS 2022**.
 
-Open PowerShell and run:
+### 3. Build
 
 ```powershell
-git clone https://github.com/YOUR-USERNAME/yolo-mouse.git
-cd yolo-mouse
-```
-
-If you downloaded the ZIP instead, extract it, open the extracted folder, right-click an empty area, and choose **Open in Terminal**.
-
-### 3. Configure the build
-
-```powershell
+git clone <your-repository-url>
+cd <your-repository-folder>
 cmake -S . -B build
-```
-
-### 4. Compile
-
-```powershell
 cmake --build build --config Release
 ```
 
-### 5. Test without moving the mouse
-
-```powershell
-.\build\Release\yolo-mouse.exe --dry-run
-```
-
-### 6. Run it
+### 4. Run
 
 ```powershell
 .\build\Release\yolo-mouse.exe
 ```
 
-You have three seconds to prepare. Press **Esc** at any time to stop.
+Set the controls, click **Start motion**, and keep **Esc** ready as the universal safety stop.
 
-## Usage
+## Controls
 
-```text
-yolo-mouse.exe [options]
+| Control | Range | Purpose |
+|---|---:|---|
+| Duration | 5–120 seconds | How long the animation runs |
+| Pattern size | 40–500 pixels | Width of the figure-eight motion |
+| Motion speed | 0.1–5.0x | How quickly the pattern repeats |
+| Stop / Esc | Anytime | Stops and restores the cursor |
 
---duration <seconds>  Run time from 1 to 300 (default: 15)
---radius <pixels>     Pattern radius from 20 to 1000 (default: 180)
---speed <value>       Motion speed from 0.1 to 10 (default: 1.0)
---dry-run             Show configuration without moving the cursor
---help                Show all options
-```
+## Requirements
 
-Example: move for 10 seconds in a larger, slower pattern:
-
-```powershell
-.\build\Release\yolo-mouse.exe --duration 10 --radius 300 --speed 0.6
-```
+- Windows 10 or Windows 11
+- Visual Studio 2022 C++ build tools
+- CMake 3.20 or newer
 
 ## Safety
 
-Run this only on your own computer and only when you can see the screen. The program does not click, type, install a service, start with Windows, use the network, or run invisibly. Keep the console focused during your first test and use **Esc** to stop.
-
-## Project layout
-
-```text
-yolo-mouse/
-├── src/
-│   └── main.cpp
-├── CMakeLists.txt
-├── LICENSE
-└── README.md
-```
-
-## Contributing
-
-Issues and pull requests are welcome. Keep changes small, readable, and easy to test.
+The app moves only the system cursor. It does not click, type, capture the screen, use a camera, or run object detection. Closing the window, clicking **Stop**, reaching the duration limit, or pressing **Esc** restores the cursor to where it started.
 
 ## License
 
-Released under the [MIT License](LICENSE).
+MIT — see [LICENSE](LICENSE).
