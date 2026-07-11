@@ -8,7 +8,9 @@ set "BUILD_DIR=%CD%\build"
 set "LOG_DIR=%CD%\logs"
 set "LOG_FILE=%LOG_DIR%\build-errors.log"
 set "EXE_FILE=%BUILD_DIR%\Release\yolo-mouse.exe"
+set "CONFIG_FILE=%CD%\yolo-mouse.ini"
 if not exist "%LOG_DIR%" mkdir "%LOG_DIR%" >nul 2>&1
+call :load_custom_settings
 
 :menu
 cls
@@ -21,11 +23,12 @@ echo    [4] Open project folder
 echo    [5] Open build errors and logs
 echo    [6] Check installed requirements
 echo    [7] Clean and rebuild everything
-echo    [8] Help and project information
-echo    [9] Exit dashboard
+    echo    [8] Help and project information
+    echo    [9] Exit dashboard
+    echo    [10] Customise app settings and colour
 echo.
 set "choice="
-set /p "choice=    Choose an option [1-9]: "
+set /p "choice=    Choose an option [1-10]: "
 if "%choice%"=="1" goto setup
 if "%choice%"=="2" goto run
 if "%choice%"=="3" goto build
@@ -35,8 +38,139 @@ if "%choice%"=="6" goto requirements
 if "%choice%"=="7" goto rebuild
 if "%choice%"=="8" goto help
 if "%choice%"=="9" goto goodbye
-call :message "That option is not valid. Enter a number from 1 to 9."
+if "%choice%"=="10" goto customise
+call :message "That option is not valid. Enter a number from 1 to 10."
 goto menu
+
+:customise
+cls
+call :header
+echo.
+echo    CUSTOMISATION CENTRE
+echo.
+echo    [1] Duration ................ !CFG_DURATION! seconds
+echo    [2] Pattern size ............ !CFG_RADIUS! pixels
+echo    [3] Motion speed ............ !CFG_SPEED! tenths (10 = 1.0x)
+echo    [4] Vertical scale .......... !CFG_HEIGHT! percent
+echo    [5] Start countdown ......... !CFG_COUNTDOWN! seconds
+echo    [6] Motion pattern .......... !CFG_PATTERN! (0=8, 1=circle, 2=horizontal, 3=vertical)
+echo    [7] Return cursor ........... !CFG_RETURN! (1=yes, 0=no)
+echo    [8] Always on top ........... !CFG_TOPMOST! (1=yes, 0=no)
+echo    [9] Accent colour ........... RGB !CFG_RED!, !CFG_GREEN!, !CFG_BLUE!
+echo    [10] Save settings and return
+echo    [11] Restore factory defaults
+echo.
+set "custom_choice="
+set /p "custom_choice=    Choose a setting [1-11]: "
+if "!custom_choice!"=="1" call :ask_value CFG_DURATION "Duration in seconds [5-300]" 5 300
+if "!custom_choice!"=="2" call :ask_value CFG_RADIUS "Pattern size in pixels [20-800]" 20 800
+if "!custom_choice!"=="3" call :ask_value CFG_SPEED "Speed in tenths [1-100, 10 = 1.0x]" 1 100
+if "!custom_choice!"=="4" call :ask_value CFG_HEIGHT "Vertical scale percent [10-100]" 10 100
+if "!custom_choice!"=="5" call :ask_value CFG_COUNTDOWN "Countdown seconds [0-10]" 0 10
+if "!custom_choice!"=="6" call :ask_value CFG_PATTERN "Pattern [0-3]" 0 3
+if "!custom_choice!"=="7" call :ask_value CFG_RETURN "Return cursor [1=yes, 0=no]" 0 1
+if "!custom_choice!"=="8" call :ask_value CFG_TOPMOST "Always on top [1=yes, 0=no]" 0 1
+if "!custom_choice!"=="9" goto colour
+if "!custom_choice!"=="10" goto save_custom
+if "!custom_choice!"=="11" goto factory_defaults
+goto customise
+
+:colour
+cls
+call :header
+echo.
+echo    ACCENT COLOUR
+echo.
+echo    [1] Indigo   [2] Blue     [3] Green
+echo    [4] Orange   [5] Pink     [6] Custom RGB
+echo.
+set /p "colour_choice=    Choose a colour [1-6]: "
+if "!colour_choice!"=="1" (set "CFG_RED=99"& set "CFG_GREEN=102"& set "CFG_BLUE=241")
+if "!colour_choice!"=="2" (set "CFG_RED=37"& set "CFG_GREEN=150"& set "CFG_BLUE=255")
+if "!colour_choice!"=="3" (set "CFG_RED=34"& set "CFG_GREEN=197"& set "CFG_BLUE=94")
+if "!colour_choice!"=="4" (set "CFG_RED=249"& set "CFG_GREEN=115"& set "CFG_BLUE=22")
+if "!colour_choice!"=="5" (set "CFG_RED=236"& set "CFG_GREEN=72"& set "CFG_BLUE=153")
+if "!colour_choice!"=="6" (
+    call :ask_value CFG_RED "Red [0-255]" 0 255
+    call :ask_value CFG_GREEN "Green [0-255]" 0 255
+    call :ask_value CFG_BLUE "Blue [0-255]" 0 255
+)
+goto customise
+
+:save_custom
+call :save_custom_settings
+call :message "Custom settings saved. They load next time the app opens."
+goto menu
+
+:factory_defaults
+set "CFG_DURATION=15"
+set "CFG_RADIUS=180"
+set "CFG_SPEED=10"
+set "CFG_HEIGHT=50"
+set "CFG_COUNTDOWN=3"
+set "CFG_PATTERN=0"
+set "CFG_RETURN=1"
+set "CFG_TOPMOST=0"
+set "CFG_RED=99"
+set "CFG_GREEN=102"
+set "CFG_BLUE=241"
+goto customise
+
+:ask_value
+set "new_value="
+set /p "new_value=    %~2: "
+for /f "delims=0123456789" %%A in ("!new_value!") do set "new_value="
+if not defined new_value (
+    call :message "Please enter numbers only."
+    exit /b 1
+)
+if !new_value! LSS %3 set "new_value=%3"
+if !new_value! GTR %4 set "new_value=%4"
+set "%~1=!new_value!"
+exit /b 0
+
+:load_custom_settings
+set "CFG_DURATION=15"
+set "CFG_RADIUS=180"
+set "CFG_SPEED=10"
+set "CFG_HEIGHT=50"
+set "CFG_COUNTDOWN=3"
+set "CFG_PATTERN=0"
+set "CFG_RETURN=1"
+set "CFG_TOPMOST=0"
+set "CFG_RED=99"
+set "CFG_GREEN=102"
+set "CFG_BLUE=241"
+if not exist "%CONFIG_FILE%" exit /b 0
+for /f "usebackq tokens=1,2 delims==" %%A in ("%CONFIG_FILE%") do (
+    if /i "%%A"=="Duration" set "CFG_DURATION=%%B"
+    if /i "%%A"=="Radius" set "CFG_RADIUS=%%B"
+    if /i "%%A"=="SpeedTenths" set "CFG_SPEED=%%B"
+    if /i "%%A"=="HeightPercent" set "CFG_HEIGHT=%%B"
+    if /i "%%A"=="Countdown" set "CFG_COUNTDOWN=%%B"
+    if /i "%%A"=="Pattern" set "CFG_PATTERN=%%B"
+    if /i "%%A"=="ReturnCursor" set "CFG_RETURN=%%B"
+    if /i "%%A"=="AlwaysOnTop" set "CFG_TOPMOST=%%B"
+    if /i "%%A"=="AccentRed" set "CFG_RED=%%B"
+    if /i "%%A"=="AccentGreen" set "CFG_GREEN=%%B"
+    if /i "%%A"=="AccentBlue" set "CFG_BLUE=%%B"
+)
+exit /b 0
+
+:save_custom_settings
+>"%CONFIG_FILE%" echo [Settings]
+>>"%CONFIG_FILE%" echo Duration=!CFG_DURATION!
+>>"%CONFIG_FILE%" echo Radius=!CFG_RADIUS!
+>>"%CONFIG_FILE%" echo SpeedTenths=!CFG_SPEED!
+>>"%CONFIG_FILE%" echo HeightPercent=!CFG_HEIGHT!
+>>"%CONFIG_FILE%" echo Countdown=!CFG_COUNTDOWN!
+>>"%CONFIG_FILE%" echo Pattern=!CFG_PATTERN!
+>>"%CONFIG_FILE%" echo ReturnCursor=!CFG_RETURN!
+>>"%CONFIG_FILE%" echo AlwaysOnTop=!CFG_TOPMOST!
+>>"%CONFIG_FILE%" echo AccentRed=!CFG_RED!
+>>"%CONFIG_FILE%" echo AccentGreen=!CFG_GREEN!
+>>"%CONFIG_FILE%" echo AccentBlue=!CFG_BLUE!
+exit /b 0
 
 :setup
 cls

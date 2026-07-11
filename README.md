@@ -1,13 +1,16 @@
 # YOLO Mouse
 
-A polished Windows cursor-motion playground with a simple native GUI. Adjust the duration, pattern size, and speed, then run a smooth figure-eight animation from your cursor's current position.
+A polished Windows cursor-motion studio with a fully configurable native GUI. Design the motion, timing, safety behavior, and window behavior before starting.
 
 > This is a cursor animation demo—not a YOLO object-detection model.
 
 ## Highlights
 
 - Modern dark Windows control panel
-- Live sliders for duration, pattern size, and speed
+- Live sliders for duration, pattern size, speed, vertical scale, and countdown
+- Figure-eight, circle, horizontal, and vertical motion patterns
+- Optional cursor restoration and always-on-top mode
+- One-click reset to sensible defaults
 - Three-second safety countdown
 - Start and Stop controls with live status
 - Press **Esc** at any time to stop
@@ -20,7 +23,9 @@ A polished Windows cursor-motion playground with a simple native GUI. Adjust the
 
 Double-click **`dashboard.bat`**, then press **1**. The dashboard checks your tools, configures the project, and builds the program. After setup, use option **2** to launch it.
 
-The numbered dashboard also lets you rebuild, open the project folder, inspect build errors, check requirements, clean the build, and view help.
+The numbered dashboard also lets you rebuild, open the project folder, inspect build errors, check requirements, clean the build, and view help. Enter **10** for the Customisation Centre, where you can configure every app default and choose an accent colour before launching.
+
+Dashboard customisations are stored locally in `yolo-mouse.ini`. The GUI loads them automatically whenever it starts; you can still adjust the controls directly in the GUI for the current session.
 
 ### Manual method
 
@@ -53,10 +58,16 @@ Set the controls, click **Start motion**, and keep **Esc** ready as the universa
 
 | Control | Range | Purpose |
 |---|---:|---|
-| Duration | 5–120 seconds | How long the animation runs |
-| Pattern size | 40–500 pixels | Width of the figure-eight motion |
-| Motion speed | 0.1–5.0x | How quickly the pattern repeats |
-| Stop / Esc | Anytime | Stops and restores the cursor |
+| Duration | 5–300 seconds | How long the animation runs |
+| Pattern size | 20–800 pixels | Width of the selected motion |
+| Motion speed | 0.1–10.0x | How quickly the pattern repeats |
+| Vertical scale | 10–100% | Height relative to the pattern width |
+| Countdown | 0–10 seconds | Delay before movement starts |
+| Motion pattern | 4 choices | Figure eight, circle, horizontal, or vertical |
+| Return cursor | On/off | Restore the starting position when stopped |
+| Always on top | On/off | Keep the control panel visible |
+| Reset | Button | Restore all default settings |
+| Stop / Esc | Anytime | Stops immediately; restores the cursor when enabled |
 
 ## Requirements
 
